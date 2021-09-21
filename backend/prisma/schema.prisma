@@ -1,0 +1,26 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// define a user table(id,username,password)
+
+model user {
+  id        Int         @id @default(autoincrement())
+  username  String      @unique
+  password  String
+  portfolio portfolio[]
+}
+
+model portfolio {
+  id          Int     @id @default(autoincrement())
+  title       String  @db.VarChar(255)
+  description String  @db.Text
+  img_url     String?
+  user_id     Int
+  user        user    @relation(fields: [user_id], references: [id])
+}
