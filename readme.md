@@ -16,9 +16,20 @@
         - create signup controller
             * how to work with bcryptjs & jwt
         - create Global Response object
+        - create Define.js and Helper.js
+        -
     1. login router
         - similar to signup
     1. isLoggedIn router
-        - will work on it        
+    1. logout router
+    1. *************************************
+    1. middleware
+    1. private route
+    1. Add Portfolio
+    1. get all portfolio
+    1. get single portfolio by id
+    1. Update/Delete Portfolio
+    
+
 
         
