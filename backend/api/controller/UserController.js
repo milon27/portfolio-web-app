@@ -1,6 +1,8 @@
 const bcryptjs = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { PrismaClient } = require('@prisma/client')
+const Response = require('../utils/Response')
+const Helper = require('../utils/Helper')
 
 const UserController = {
 
@@ -8,17 +10,15 @@ const UserController = {
         try {
             const { username, password } = req.body
             //validation
-            if (!username || !password) {
+            const value = Helper.validateUserInput(username, password)
+            if (value) {
                 throw new Error("Enter username and password")
             }
             if (password.length < 6) {
                 throw new Error("Enter password with minimum character 6")
             }
             //hash our password
-            const salt = bcryptjs.genSaltSync(10)
-            // console.log("salt-> ", salt);
-            const hashpass = bcryptjs.hashSync(password, salt)
-            // console.log("hashpass-> ", hashpass);
+            const hashpass = Helper.getHashPassword(password)
 
             //save user into database
             const prisma = new PrismaClient()
@@ -28,30 +28,49 @@ const UserController = {
                     password: hashpass
                 }
             })
-
             //token 
-            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRATE + "")
-            //console.log("token->", token);
+            const newuser = Helper.passTokenToCookie(user, res)
 
-            const newuserobj = {
-                ...user, token: token
-            }
-            delete newuserobj.password
-
-            //send back to token as cookie
-            res.cookie("auth_token", token, {
-                httpOnly: true,
-                secure: false,
-                sameSite: "lax"
-            })
-
-            res.send({ msg: "success", newuserobj })
+            res.send(Response(false, "user created succesfully", newuser))
         } catch (e) {
-            res.status(500).send(e.message)
+            console.log(e);
+            res.status(500).send(Response(true, e.message, null))
         }
     },
-    login: (req, res) => {
-        res.send("login end point...")
+    login: async (req, res) => {
+        try {
+            const { username, password } = req.body
+            //validate
+            const value = Helper.validateUserInput(username, password)
+            if (value) {
+                throw new Error("Enter username and password")
+            }
+            //search user by his username
+            const prisma = new PrismaClient()
+            //selct * from user, todo
+            const user = await prisma.user.findUnique({
+                where: {
+                    username: username
+                }
+            })
+            if (user === null) {
+                throw new Error("user doesn't exist.")
+            }
+            //validate
+            const result = Helper.validatePassword(password, user.password)
+            if (result === false) {
+                throw new Error("user password is incorrect")
+            }
+            //token
+            const newuser = Helper.passTokenToCookie(user, res)
+
+            console.log("user->", newuser);
+            res.send(Response(false, "user logged in successfully", newuser))
+
+        } catch (e) {
+            console.log(e);
+            res.status(500).send(Response(true, e.message, null))
+        }
     }
 }
 
