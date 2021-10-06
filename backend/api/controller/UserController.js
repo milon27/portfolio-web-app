@@ -71,6 +71,31 @@ const UserController = {
             console.log(e);
             res.status(500).send(Response(true, e.message, null))
         }
+    },
+    isLoggedIn: (req, res) => {
+        try {
+            const { auth_token } = req.cookies
+            Helper.verifyJwtToken(auth_token)
+            res.send(true)
+        } catch (e) {
+            console.log("error", e);
+            res.send(false)
+        }
+    },
+    logout: (req, res) => {
+        try {
+            res.cookie("auth_token", "", {
+                httpOnly: true,
+                secure: false,
+                sameSite: "lax",
+                expires: new Date(0)
+            })
+
+            res.send(true)
+        } catch (e) {
+            console.log("error", e);
+            res.send(false)
+        }
     }
 }
 

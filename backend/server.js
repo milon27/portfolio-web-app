@@ -1,5 +1,7 @@
 const express = require('express')
 const cookieParser = require('cookie-parser')
+const AuthMid = require('./api/router/middleware/AuthMid')
+
 require('dotenv').config()
 
 
@@ -18,7 +20,10 @@ app.get('/', (req, res) => {
 })
 
 //user
+//http://localhost:2727/user/*
 app.use('/user', require('./api/router/userRouter'))
+app.use('/portfolio', AuthMid, require('./api/router/portfolioRouter'))
+
 
 // global error
 app.use((req, res) => {

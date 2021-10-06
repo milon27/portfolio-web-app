@@ -17,14 +17,13 @@
             * how to work with bcryptjs & jwt
         - create Global Response object
         - create Define.js and Helper.js
-        -
     1. login router
         - similar to signup
     1. isLoggedIn router
     1. logout router
-    1. *************************************
-    1. middleware
+    1. explain middleware
     1. private route
+    1. update schema (add portfolio category)
     1. Add Portfolio
     1. get all portfolio
     1. get single portfolio by id

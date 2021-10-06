@@ -17,9 +17,26 @@ const Helper = {
 
         return hasError
     },
+    //{a:1,b:2,c:null}=> [a,b,c]
+    cleanObject: (obj) => {
+        Object.keys(obj).forEach(key => {
+            if (obj[key] === null || obj[key] === undefined) {
+                delete obj[key]
+            }
+        })
+        return obj
+    },
+
     getJwtToken: (id) => {
         const token = jwt.sign({ id: id }, process.env.JWT_SECRATE + "")
         return token
+    },
+    verifyJwtToken: (token) => {
+        if (!token) {
+            throw new Error("token is not available")
+        }
+        const { id } = jwt.verify(token, process.env.JWT_SECRATE)
+        return id
     },
     getHashPassword: (password) => {
         const salt = bcryptjs.genSaltSync(10)//10 random
