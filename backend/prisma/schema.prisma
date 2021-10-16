@@ -23,4 +23,21 @@ model portfolio {
   img_url     String?
   user_id     Int
   user        user    @relation(fields: [user_id], references: [id])
+
+  cat_id   Int
+  category category @relation(fields: [cat_id], references: [id])
+
+  tags tags[]
+}
+
+model category {
+  id        Int         @id @default(autoincrement())
+  title     String      @db.VarChar(255)
+  portfolio portfolio[]
+}
+
+model tags {
+  id        Int         @id @default(autoincrement())
+  title     String      @db.VarChar(255)
+  portfolio portfolio[]
 }

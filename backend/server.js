@@ -23,6 +23,7 @@ app.get('/', (req, res) => {
 //http://localhost:2727/user/*
 app.use('/user', require('./api/router/userRouter'))
 app.use('/portfolio', AuthMid, require('./api/router/portfolioRouter'))
+app.use('/category', AuthMid, require('./api/router/categoryRouter'))
 
 
 // global error
